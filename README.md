@@ -135,50 +135,68 @@ FlowStudy/
 ├── README.md  
 │  
 ├── docs/  
-│   ├── use-case-diagram.md  
-│   ├── class-diagram.md  
-│   └── ai-development-log.md  
+│　　├── use-case-diagram.md  
+│　　├── class-diagram.md  
+│　　└── ai-development-log.md  
 │  
 ├── src/  
-│   ├── main/  
-│   │   ├── java/  
-│   │   │   └── com/  
-│   │   │       └── flowstudy/  
-│   │   │           ├── FlowStudyApplication.java  
-│   │   │           │  
-│   │   │           ├── controller/  
-│   │   │           │   ├── FocusLogController.java  
-│   │   │           │   ├── TodoController.java  
-│   │   │           │   └── StudyRoomController.java  
-│   │   │           │  
-│   │   │           ├── service/  
-│   │   │           │   ├── FocusLogService.java  
-│   │   │           │   ├── TodoService.java  
-│   │   │           │   └── StudyRoomService.java  
-│   │   │           │  
-│   │   │           ├── model/  
-│   │   │           │   ├── FocusLog.java  
-│   │   │           │   ├── Todo.java  
-│   │   │           │   └── StudyRoom.java  
-│   │   │           │  
-│   │   │           └── core/  
-│   │   │               ├── TimerStateMachine.java  
-│   │   │               └── MilestoneScheduler.java  
-│   │   │  
-│   │   └── resources/   
-│   │       ├── application.properties   
-│   │       └── static/   
-│   │           ├── index.html  
-│   │           ├── css/  
-│   │           │   └── style.css  
-│   │           ├── js/  
-│   │           │   ├── timer.js  
-│   │           │   ├── audio.js  
-│   │           │   ├── kanban.js  
-│   │           │   └── room.js  
-│   │           └── assets/  
-│   │               └── sounds/  
-│   │                   ├── rain.mp3  
-│   │                   ├── cafe.mp3  
-│   │                   ├── campfire.mp3  
-│   │                   └── keyboard.mp3  
+│　　├── main/  
+│　　│　　├── java/  
+│　　│　　│　　└── com/  
+│　　│　　│　　　　└── flowstudy/  
+│　　│　　│　　　　　　├── FlowStudyApplication.java  
+│　　│　　│　　　　　　│  
+│　　│　　│　　　　　　├── controller/  
+│　　│　　│　　　　　　│　　├── FocusLogController.java  
+│　　│　　│　　　　　　│　　├── TodoController.java  
+│　　│　　│　　　　　　│　　└── StudyRoomController.java  
+│　　│　　│　　　　　　│  
+│　　│　　│　　　　　　├── service/  
+│　　│　　│　　　　　　│　　├── FocusLogService.java  
+│　　│　　│　　　　　　│　　├── TodoService.java  
+│　　│　　│　　　　　　│　　└── StudyRoomService.java  
+│　　│　　│　　　　　　│  
+│　　│　　│　　　　　　├── model/  
+│　　│　　│　　　　　　│　　├── FocusLog.java  
+│　　│　　│　　　　　　│　　├── Todo.java  
+│　　│　　│　　　　　　│　　└── StudyRoom.java  
+│　　│　　│　　　　　　│  
+│　　│　　│　　　　　　└── core/  
+│　　│　　│　　　　　　　　├── TimerStateMachine.java  
+│　　│　　│　　　　　　　　└── MilestoneScheduler.java  
+│　　│　　│  
+│　　│   └── resources/   
+│　　│　　　　　　├── application.properties   
+│　　│　　　　　　└── static/   
+│　　│　　　　　　├── index.html  
+│　　│　　　　　　├── css/  
+│　　│　　　　　　│　　└── style.css  
+│　　│　　　　　　├── js/  
+│　　│　　　　　　│　　├── timer.js  
+│　　│　　　　　　│　　├── audio.js  
+│　　│　　　　　　│　　├── kanban.js  
+│　　│　　　　　　│　　└── room.js  
+│　　│　　　　　　└── assets/  
+│　　│　　　　　　　　└── sounds/  
+│　　│　　　　　　　　　　　├── rain.mp3  
+│　　│　　　　　　　　　　　├── cafe.mp3  
+│　　│　　　　　　　　　　　├── campfire.mp3  
+│　　│　　　　　　　　　　　└── keyboard.mp3  
+
+## 前端
+static/  
+├── index.html  
+├── css/  
+│　　└── style.css  
+├── js/  
+│　　├── api.js  
+│　　├── timer.js  
+│　　├── audio.js  
+│　　├── kanban.js  
+│　　└── room.js  
+└── assets/  
+　　└── sounds/   
+　　　　├── rain.mp3  
+　　　　├── cafe.mp3  
+　　　　├── campfire.mp3  
+　　　　└── keyboard.mp3  
