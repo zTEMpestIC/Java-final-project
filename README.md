@@ -201,7 +201,7 @@ static/
 　　　　├── campfire.mp3  
 　　　　└── keyboard.mp3  
 
-##後端
+## 後端
 controller/   
 ├── FocusLogController.java  
 ├── TodoController.java  
@@ -217,7 +217,7 @@ model/
 ├── Todo.java  
 └── StudyRoom.java  
 
-##core
+## core
 core/  
 ├── TimerState.java  
 ├── TimerMode.java  
