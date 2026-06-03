@@ -49,6 +49,12 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
+        <!-- Jakarta EE Persistence API -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+
         <!-- Database - PostgreSQL (Phase 2) & H2 for testing -->
         <dependency>
             <groupId>org.postgresql</groupId>
