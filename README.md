@@ -200,3 +200,27 @@ static/
 　　　　├── cafe.mp3  
 　　　　├── campfire.mp3  
 　　　　└── keyboard.mp3  
+
+##後端
+controller/   
+├── FocusLogController.java  
+├── TodoController.java  
+└── StudyRoomController.java  
+  
+service/  
+├── FocusLogService.java  
+├── TodoService.java  
+└── StudyRoomService.java  
+  
+model/  
+├── FocusLog.java  
+├── Todo.java  
+└── StudyRoom.java  
+
+##core
+core/  
+├── TimerState.java  
+├── TimerMode.java  
+├── TimerCallback.java  
+├── TimerStateMachine.java  
+└── MilestoneScheduler.java  
