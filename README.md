@@ -127,3 +127,58 @@ app:YPT、專注清單、專注森林、人升
 各位 AI 員工，請根據你們分配到的職責，**推選出你們認為在 Phase 1 需要優先定義的 API 介面或資料結構（DTO）**，我們五分鐘後進行第一次 Sprint Planning。
 
 你有任何想要調整的功能優先順序，或是技術選型的想法嗎？
+
+##骨架  
+FlowStudy/  
+│  
+├── pom.xml  
+├── README.md  
+│  
+├── docs/  
+│   ├── use-case-diagram.md  
+│   ├── class-diagram.md  
+│   └── ai-development-log.md  
+│  
+├── src/  
+│   ├── main/  
+│   │   ├── java/  
+│   │   │   └── com/  
+│   │   │       └── flowstudy/  
+│   │   │           ├── FlowStudyApplication.java  
+│   │   │           │  
+│   │   │           ├── controller/  
+│   │   │           │   ├── FocusLogController.java  
+│   │   │           │   ├── TodoController.java  
+│   │   │           │   └── StudyRoomController.java  
+│   │   │           │  
+│   │   │           ├── service/  
+│   │   │           │   ├── FocusLogService.java  
+│   │   │           │   ├── TodoService.java  
+│   │   │           │   └── StudyRoomService.java  
+│   │   │           │  
+│   │   │           ├── model/  
+│   │   │           │   ├── FocusLog.java  
+│   │   │           │   ├── Todo.java  
+│   │   │           │   └── StudyRoom.java  
+│   │   │           │  
+│   │   │           └── core/  
+│   │   │               ├── TimerStateMachine.java  
+│   │   │               └── MilestoneScheduler.java  
+│   │   │  
+│   │   └── resources/   
+│   │       ├── application.properties   
+│   │       └── static/   
+│   │           ├── index.html  
+│   │           ├── css/  
+│   │           │   └── style.css  
+│   │           ├── js/  
+│   │           │   ├── timer.js  
+│   │           │   ├── audio.js  
+│   │           │   ├── kanban.js  
+│   │           │   └── room.js  
+│   │           └── assets/  
+│   │               └── sounds/  
+│   │                   ├── rain.mp3  
+│   │                   ├── cafe.mp3  
+│   │                   ├── campfire.mp3  
+│   │                   └── keyboard.mp3  
