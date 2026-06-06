@@ -25,5 +25,7 @@ com\flowstudy\websocket\WebSocketConfig.class
 com\flowstudy\model\Todo$TodoBuilder.class
 com\flowstudy\model\FocusLog$FocusLogBuilder.class
 com\flowstudy\core\contract\MilestoneAndSocialContract.class
+com\flowstudy\controller\FocusApiController$FocusLogPayload.class
+com\flowstudy\controller\FocusApiController.class
 com\flowstudy\core\contract\StudyContract$TodoDTO$TaskStatus.class
 com\flowstudy\websocket\StudyRoomController$RoomStatusMessage.class
