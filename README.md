@@ -19,26 +19,71 @@ FlowStudy 是一個 Java 21 / Spring Boot 3 後端 + JavaFX 前端的分佈式�
 ## 🏗️ 項目結構
 
 ```
-FlowStudy/
-├── src/main/java/com/flowstudy/
-│   ├── core/                      # AI_Core 核心邏輯
-│   │   ├── TimerStateMachine      # 通用計時器狀態機
-│   │   ├── TimerInterfaces        # 計時器相關介面
-│   │   └── MilestoneScheduler     # 里程碑智能推算
-│   ├── dto/                       # 數據傳輸對象
-│   ├── service/                   # AI_Backend 服務層
-│   ├── controller/                # REST API 控制器
-│   ├── websocket/                 # WebSocket 即時通訊
-│   ├── model/                     # JPA 實體
-│   └── repository/                # 數據訪問層
-├── src/test/java/com/flowstudy/
-│   ├── core/                      # 核心邏輯單元測試
-│   └── service/                   # 服務層單元測試
-├── docs/
-│   ├── CORE_API_PHASE1.md         # 核心 API 完整文檔 (7.8 KB)
-│   ├── BACKEND_HANDOFF_PHASE1.md  # 後端交接文檔 (4.1 KB)
-│   └── FRONTEND_HANDOFF_PHASE1.md # 前端交接文檔 (4.5 KB)
-└── pom.xml                        # Maven 依賴配置 (Java 21)
+FlowStudy 
+│  pom.xml
+│  README.md
+│  
+├─docs
+│      BACKEND_HANDOFF_PHASE1.md
+│      core.md
+│      
+├─src
+│  ├─main
+│  │  ├─java
+│  │  │  └─com
+│  │  │      └─flowstudy
+│  │  │          │  FlowStudyApplication.java
+│  │  │          │  
+│  │  │          ├─core
+│  │  │          │  │  MilestoneScheduler.java
+│  │  │          │  │  TimerStateMachine.java
+│  │  │          │  │  
+│  │  │          │  └─contract
+│  │  │          │          MilestoneAndSocialContract.java
+│  │  │          │          StudyContract.java
+│  │  │          │          TimerContract.java
+│  │  │          │          
+│  │  │          ├─model
+│  │  │          │      FocusLog.java
+│  │  │          │      Subject.java
+│  │  │          │      Todo.java
+│  │  │          │      
+│  │  │          ├─repository
+│  │  │          │      FocusLogRepository.java
+│  │  │          │      
+│  │  │          └─websocket
+│  │  │                  StudyRoomController.java
+│  │  │                  WebSocketConfig.java
+│  │  │                  
+│  │  └─resources
+│  │      │   application.yml
+│  │      ├──static
+│  │      │      ws-test.html
+│  │      │   index.html  
+│  │      ├──css  
+│  │      │      style.css  
+│  │      ├──js  
+│  │      │      timer.js  
+│  │      │      audio.js  
+│  │      │      kanban.js  
+│  │      │      room.js  
+│  │      └──assets  
+│  │            └──sounds  
+│  │          　      rain.mp3  
+│  │          　      cafe.mp3  
+│  │          　      campfire.mp3  
+│  │          　      keyboard.mp3  
+│  │              
+│  └─test
+│      └─java
+│          └─com
+│              └─flowstudy
+│                  ├─core
+│                  │      MilestoneSchedulerTest.java
+│                  │      TimerStateMachineTest.java
+│                  │      
+│                  └─repository
+│                          FocusLogRepositoryTest.java
 ```
 
 ---
@@ -331,6 +376,22 @@ System.out.println(scheduler.generateWarning());
 
 ---
 
-**最後更新**: 2026-06-03  
-**Phase 狀態**: Phase 1 進行中 ✅  
-**下一步**: Backend/Frontend 接手實現
+```
+## 前端
+static/  
+├── index.html  
+├── css/  
+│　　└── style.css  
+├── js/  
+│　　├── api.js  
+│　　├── timer.js  
+│　　├── audio.js  
+│　　├── kanban.js  
+│　　└── room.js  
+└── assets/  
+　　└── sounds/   
+　　　　├── rain.mp3  
+　　　　├── cafe.mp3  
+　　　　├── campfire.mp3  
+　　　　└── keyboard.mp3  
+```
