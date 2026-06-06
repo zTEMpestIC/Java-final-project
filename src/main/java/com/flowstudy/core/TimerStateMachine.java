@@ -1,209 +1,116 @@
 package com.flowstudy.core;
 
-import java.util.logging.Logger;
+import com.flowstudy.core.contract.TimerContract;
+import com.flowstudy.core.contract.TimerContract.State;
+import com.flowstudy.core.contract.TimerContract.Mode;
 
-/**
- * 通用計時器核心引擎 - 支援正計時、倒計時、自定義番茄鐘循環
- */
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class TimerStateMachine {
-    private static final Logger logger = Logger.getLogger(TimerStateMachine.class.getName());
-    
-    private final TimerMode mode;
-    private final PomodoroConfig pomodoroConfig;
-    private final long targetTimeMs;
-    private final ITimerCallback callback;
+    private State state = State.STOPPED;
+    private Mode mode;
+    private long timeRemainingMs;
+    private long timeElapsedMs;
+    private final TimerContract.ITimerCallback callback;
+    private ScheduledExecutorService scheduler;
 
-    private TimerState state = TimerState.IDLE;
-    private long elapsedMs = 0;
-    private int currentCycleIndex = 0;
-    private boolean isCurrentlyBreak = false;
-
-    private volatile boolean isRunning = false;
-    private Thread timerThread;
-
-    // 建構式
-
-    public TimerStateMachine(PomodoroConfig config, ITimerCallback callback) {
-        this.mode = TimerMode.POMODORO;
-        this.pomodoroConfig = config;
-        this.targetTimeMs = -1;
+    public TimerStateMachine(TimerContract.ITimerCallback callback) {
         this.callback = callback;
     }
 
-    public TimerStateMachine(TimerMode mode, long targetTimeMs, ITimerCallback callback) {
-        if (mode == TimerMode.POMODORO) {
-            throw new IllegalArgumentException("請使用 PomodoroConfig 建構子");
-        }
-        this.mode = mode;
-        this.pomodoroConfig = null;
-        this.targetTimeMs = targetTimeMs;
-        this.callback = callback;
-    }
-
-    // 公開介面
-
-    public synchronized void start() {
-        if (state == TimerState.RUNNING || state == TimerState.COMPLETED) {
-            return;
-        }
-
-        state = TimerState.RUNNING;
-        isRunning = true;
-
-        if (timerThread != null && timerThread.isAlive()) {
-            return;
-        }
-
-        timerThread = new Thread(this::timerLoop);
-        timerThread.setDaemon(true);
-        timerThread.setName("TimerStateMachine-" + Thread.currentThread().getId());
-        timerThread.start();
-
-        callback.onResume();
+    // 使用 DTO 作為參數，享受 record 帶來的自動防呆校驗
+    public synchronized void start(TimerContract.TimerConfigDTO config) {
+        if (state == State.RUNNING) return;
+        
+        this.mode = config.mode();
+        this.timeRemainingMs = config.durationMs();
+        this.timeElapsedMs = 0;
+        
+        changeState(State.RUNNING);
+        startScheduler();
     }
 
     public synchronized void pause() {
-        if (state != TimerState.RUNNING) {
-            return;
+        if (state == State.RUNNING) {
+            changeState(State.PAUSED);
+            stopScheduler();
         }
-        state = TimerState.PAUSED;
-        isRunning = false;
-        callback.onPause();
     }
 
     public synchronized void resume() {
-        if (state != TimerState.PAUSED) {
-            return;
+        if (state == State.PAUSED) {
+            changeState(State.RUNNING);
+            startScheduler();
         }
-        state = TimerState.RUNNING;
-        isRunning = true;
-        callback.onResume();
     }
 
+    // 由於使用者主動中斷
     public synchronized void stop() {
-        state = TimerState.CANCELLED;
-        isRunning = false;
-        elapsedMs = 0;
-        currentCycleIndex = 0;
-        isCurrentlyBreak = false;
+        if (state == State.STOPPED) return;
+        
+        changeState(State.STOPPED);
+        stopScheduler();
+        timeRemainingMs = 0;
+        timeElapsedMs = 0;
     }
 
-    public TimerState getState() {
-        return state;
-    }
-
-    public long getElapsedMs() {
-        return elapsedMs;
-    }
-
-    public int getProgressPercentage() {
-        if (mode == TimerMode.POMODORO) {
-            long currentPhaseMs = isCurrentlyBreak ?
-                pomodoroConfig.breakMinutes() * 60_000L :
-                pomodoroConfig.focusMinutes() * 60_000L;
-            return (int) ((elapsedMs % currentPhaseMs) * 100 / currentPhaseMs);
-        } else {
-            return (int) (elapsedMs * 100 / targetTimeMs);
+    // 內部方法：由於時間到而自然完成
+    private synchronized void complete() {
+        changeState(State.STOPPED);
+        stopScheduler();
+        if (callback != null) {
+            // 確保最後一次的 UI 更新歸零
+            callback.onTick(0, timeElapsedMs);
+            callback.onComplete(this.mode);
         }
+        timeRemainingMs = 0;
+        timeElapsedMs = 0;
     }
 
-    public int getCurrentCycleIndex() {
-        return currentCycleIndex;
-    }
-
-    public boolean isCurrentlyBreak() {
-        return isCurrentlyBreak;
-    }
-
-    // 私有方法
-
-    private void timerLoop() {
-        long lastUpdateMs = System.currentTimeMillis();
-
-        while (isRunning) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
+    // 統一的狀態變更處理中心，負責觸發回調
+    private void changeState(State newState) {
+        if (this.state != newState) {
+            State oldState = this.state;
+            this.state = newState;
+            if (callback != null) {
+                callback.onStateChanged(oldState, newState);
             }
+        }
+    }
 
-            if (!isRunning) {
-                break;
+    private void startScheduler() {
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        // 每 100 毫秒執行一次 tick
+        scheduler.scheduleAtFixedRate(this::tick, 100, 100, TimeUnit.MILLISECONDS);
+    }
+
+    private void stopScheduler() {
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdownNow();
+        }
+    }
+
+    private synchronized void tick() {
+        if (state != State.RUNNING) return;
+
+        timeElapsedMs += 100;
+        
+        if (mode == Mode.BACKWARD || mode == Mode.POMODORO) {
+            timeRemainingMs -= 100;
+            if (timeRemainingMs <= 0) {
+                timeRemainingMs = 0;
+                complete();
+                return;
             }
-
-            long currentTimeMs = System.currentTimeMillis();
-            long deltaMs = currentTimeMs - lastUpdateMs;
-            lastUpdateMs = currentTimeMs;
-
-            updateTimer(deltaMs);
+        } else if (mode == Mode.FORWARD) {
+            // 正計時沒有剩餘時間的概念，將其與經過時間同步（或保持為 0，視前端需求）
+            timeRemainingMs += 100; 
         }
-    }
-
-    private synchronized void updateTimer(long deltaMs) {
-        if (state != TimerState.RUNNING) {
-            return;
+        
+        if (callback != null) {
+            callback.onTick(timeRemainingMs, timeElapsedMs);
         }
-
-        elapsedMs += deltaMs;
-
-        switch (mode) {
-            case FORWARD -> handleForwardMode();
-            case BACKWARD -> handleBackwardMode();
-            case POMODORO -> handlePomodoroMode();
-        }
-    }
-
-    private void handleForwardMode() {
-        callback.onTick(elapsedMs, targetTimeMs);
-        if (elapsedMs >= targetTimeMs) {
-            state = TimerState.COMPLETED;
-            isRunning = false;
-            callback.onAllCyclesComplete();
-        }
-    }
-
-    private void handleBackwardMode() {
-        long remainingMs = targetTimeMs - elapsedMs;
-        callback.onTick(remainingMs, targetTimeMs);
-        if (remainingMs <= 0) {
-            state = TimerState.COMPLETED;
-            isRunning = false;
-            callback.onAllCyclesComplete();
-        }
-    }
-
-    private void handlePomodoroMode() {
-        long focusMs = pomodoroConfig.focusMinutes() * 60_000L;
-        long breakMs = pomodoroConfig.breakMinutes() * 60_000L;
-        long cycleMs = focusMs + breakMs;
-        long totalMs = cycleMs * pomodoroConfig.cycles();
-
-        if (elapsedMs >= totalMs) {
-            state = TimerState.COMPLETED;
-            isRunning = false;
-            callback.onAllCyclesComplete();
-            return;
-        }
-
-        long positionInCycle = elapsedMs % cycleMs;
-        int newCycleIndex = (int) (elapsedMs / cycleMs);
-        boolean newIsBreak = positionInCycle >= focusMs;
-
-        if (newCycleIndex != currentCycleIndex || newIsBreak != isCurrentlyBreak) {
-            currentCycleIndex = newCycleIndex;
-            isCurrentlyBreak = newIsBreak;
-
-            long remainingInTotal = totalMs - elapsedMs;
-            callback.onPhaseComplete(!isCurrentlyBreak, remainingInTotal > 0 ? remainingInTotal : -1);
-        }
-
-        long currentPhaseMs = isCurrentlyBreak ? breakMs : focusMs;
-        long elapsedInPhase = elapsedMs % cycleMs;
-        if (isCurrentlyBreak) {
-            elapsedInPhase -= focusMs;
-        }
-
-        callback.onTick(elapsedInPhase, currentPhaseMs);
     }
 }

@@ -1,128 +1,103 @@
 package com.flowstudy.core;
 
+import com.flowstudy.core.contract.TimerContract;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * TimerStateMachine 單元測試
- */
-public class TimerStateMachineTest {
+class TimerStateMachineTest {
+
+    private TestTimerCallback callback;
     private TimerStateMachine timer;
-    private MockTimerCallback callback;
+
+    // 自定義一個 Callback 用於收集測試數據
+    static class TestTimerCallback implements TimerContract.ITimerCallback {
+        public CountDownLatch completeLatch = new CountDownLatch(1);
+        public List<TimerContract.State> stateHistory = new ArrayList<>();
+        public boolean isCompleted = false;
+        public long finalElapsedMs = 0;
+
+        @Override
+        public void onTick(long remainingMs, long elapsedMs) {
+            this.finalElapsedMs = elapsedMs;
+        }
+
+        @Override
+        public void onStateChanged(TimerContract.State oldState, TimerContract.State newState) {
+            stateHistory.add(newState);
+        }
+
+        @Override
+        public void onComplete(TimerContract.Mode mode) {
+            isCompleted = true;
+            completeLatch.countDown();
+        }
+    }
 
     @BeforeEach
     void setUp() {
-        callback = new MockTimerCallback();
+        callback = new TestTimerCallback();
+        timer = new TimerStateMachine(callback);
     }
 
     @Test
-    void testPomodoroModeStart() {
-        PomodoroConfig config = new PomodoroConfig(1, 1, 1); // 1分鐘專注, 1分鐘休息
-        timer = new TimerStateMachine(config, callback);
+    void testTimerCompletion() throws InterruptedException {
+        // Arrange: 建立一個 300 毫秒的倒計時
+        TimerContract.TimerConfigDTO config = new TimerContract.TimerConfigDTO(TimerContract.Mode.BACKWARD, 300);
 
-        assertEquals(TimerState.IDLE, timer.getState());
+        // Act
+        timer.start(config);
 
-        timer.start();
-        assertEquals(TimerState.RUNNING, timer.getState());
-        assertTrue(callback.resumeCalled);
+        // Assert: 等待計時器完成 (最多等 2 秒防死鎖)
+        boolean finishedInTime = callback.completeLatch.await(2, TimeUnit.SECONDS);
+
+        assertTrue(finishedInTime, "計時器應在指定時間內完成");
+        assertTrue(callback.isCompleted, "onComplete 回調應該被觸發");
+        assertEquals(300, callback.finalElapsedMs, "經過時間應該精準等於 300ms");
+        
+        // 驗證狀態流轉: STOPPED -> RUNNING -> STOPPED (完成時)
+        assertEquals(TimerContract.State.RUNNING, callback.stateHistory.get(0));
+        assertEquals(TimerContract.State.STOPPED, callback.stateHistory.get(1));
     }
 
     @Test
-    void testPomodoroModePauseResume() throws InterruptedException {
-        PomodoroConfig config = new PomodoroConfig(1, 1, 1);
-        timer = new TimerStateMachine(config, callback);
+    void testPauseAndResumeStateTransitions() throws InterruptedException {
+        // Arrange: 建立一個長一點的計時器，避免馬上結束
+        TimerContract.TimerConfigDTO config = new TimerContract.TimerConfigDTO(TimerContract.Mode.POMODORO, 5000);
 
-        timer.start();
-        Thread.sleep(200);
-
+        // Act: 啟動 -> 暫停 -> 恢復 -> 停止
+        timer.start(config);
+        Thread.sleep(150); // 讓它跑一下
+        
         timer.pause();
-        assertEquals(TimerState.PAUSED, timer.getState());
-        assertTrue(callback.pauseCalled);
-
-        long elapsedBefore = timer.getElapsedMs();
         Thread.sleep(100);
-        long elapsedAfter = timer.getElapsedMs();
-        assertEquals(elapsedBefore, elapsedAfter); // 暫停時不應該繼續計時
-
+        
         timer.resume();
-        assertEquals(TimerState.RUNNING, timer.getState());
-    }
-
-    @Test
-    void testForwardMode() throws InterruptedException {
-        long targetMs = 500; // 500ms
-        timer = new TimerStateMachine(TimerMode.FORWARD, targetMs, callback);
-
-        timer.start();
-        Thread.sleep(600); // 等待完成
-
-        assertEquals(TimerState.COMPLETED, timer.getState());
-        assertTrue(callback.allCyclesCompleteCalled);
-        assertTrue(timer.getElapsedMs() >= targetMs);
-    }
-
-    @Test
-    void testBackwardMode() throws InterruptedException {
-        long targetMs = 500;
-        timer = new TimerStateMachine(TimerMode.BACKWARD, targetMs, callback);
-
-        timer.start();
-        Thread.sleep(600);
-
-        assertEquals(TimerState.COMPLETED, timer.getState());
-    }
-
-    @Test
-    void testStop() throws InterruptedException {
-        PomodoroConfig config = new PomodoroConfig(10, 10, 1);
-        timer = new TimerStateMachine(config, callback);
-
-        timer.start();
-        Thread.sleep(200);
-
+        Thread.sleep(150);
+        
         timer.stop();
-        assertEquals(TimerState.CANCELLED, timer.getState());
-        assertEquals(0, timer.getElapsedMs());
+
+        // Assert: 驗證狀態流轉歷史紀錄
+        assertEquals(4, callback.stateHistory.size(), "應該要有 4 次狀態變更");
+        assertEquals(TimerContract.State.RUNNING, callback.stateHistory.get(0)); // 啟動
+        assertEquals(TimerContract.State.PAUSED, callback.stateHistory.get(1));  // 暫停
+        assertEquals(TimerContract.State.RUNNING, callback.stateHistory.get(2)); // 恢復
+        assertEquals(TimerContract.State.STOPPED, callback.stateHistory.get(3)); // 停止
     }
 
     @Test
-    void testPomodoroConfigStandard() {
-        PomodoroConfig config = PomodoroConfig.standard();
-        assertEquals(25, config.focusMinutes());
-        assertEquals(5, config.breakMinutes());
-        assertEquals(4, config.cycles());
-    }
-
-    // Mock 實現
-    private static class MockTimerCallback implements ITimerCallback {
-        public boolean resumeCalled = false;
-        public boolean pauseCalled = false;
-        public boolean allCyclesCompleteCalled = false;
-        public int tickCount = 0;
-
-        @Override
-        public void onTick(long elapsedMs, long totalMs) {
-            tickCount++;
-        }
-
-        @Override
-        public void onPause() {
-            pauseCalled = true;
-        }
-
-        @Override
-        public void onResume() {
-            resumeCalled = true;
-        }
-
-        @Override
-        public void onPhaseComplete(boolean isBreak, long nextPhaseMs) {
-        }
-
-        @Override
-        public void onAllCyclesComplete() {
-            allCyclesCompleteCalled = true;
-        }
+    void testTimerConfigValidation() {
+        // Assert: 驗證 DTO 的建構子是否能成功擋住負數時間 (這就是 record 的優勢)
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class, 
+            () -> new TimerContract.TimerConfigDTO(TimerContract.Mode.BACKWARD, -100)
+        );
+        assertTrue(exception.getMessage().contains("時長不能為負數"));
     }
 }
