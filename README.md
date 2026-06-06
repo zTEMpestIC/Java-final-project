@@ -121,7 +121,6 @@ FlowStudy
 ```bash
 # 克隆項目
 git clone <repo-url>
-cd FlowStudy
 
 # 構建項目
 mvn clean install
