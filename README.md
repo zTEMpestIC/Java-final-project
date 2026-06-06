@@ -57,7 +57,6 @@ FlowStudy
 │  │  │                  
 │  │  └─resources
 │  │      │   application.yml
-│  │      │   application.properties   
 │  │      ├──static
 │  │      │      ws-test.html
 │  │      │   index.html  
@@ -377,74 +376,7 @@ System.out.println(scheduler.generateWarning());
 
 ---
 
-##骨架  
-FlowStudy 
-│  pom.xml
-│  README.md
-│  
-├─docs
-│      BACKEND_HANDOFF_PHASE1.md
-│      core.md
-│      
-├─src
-│  ├─main
-│  │  ├─java
-│  │  │  └─com
-│  │  │      └─flowstudy
-│  │  │          │  FlowStudyApplication.java
-│  │  │          │  
-│  │  │          ├─core
-│  │  │          │  │  MilestoneScheduler.java
-│  │  │          │  │  TimerStateMachine.java
-│  │  │          │  │  
-│  │  │          │  └─contract
-│  │  │          │          MilestoneAndSocialContract.java
-│  │  │          │          StudyContract.java
-│  │  │          │          TimerContract.java
-│  │  │          │          
-│  │  │          ├─model
-│  │  │          │      FocusLog.java
-│  │  │          │      Subject.java
-│  │  │          │      Todo.java
-│  │  │          │      
-│  │  │          ├─repository
-│  │  │          │      FocusLogRepository.java
-│  │  │          │      
-│  │  │          └─websocket
-│  │  │                  StudyRoomController.java
-│  │  │                  WebSocketConfig.java
-│  │  │                  
-│  │  └─resources
-│  │      │   application.yml
-│  │      │   application.properties   
-│  │      ├──static
-│  │      │      ws-test.html
-│  │      │   index.html  
-│  │      ├──css  
-│  │      │      style.css  
-│  │      ├──js  
-│  │      │      timer.js  
-│  │      │      audio.js  
-│  │      │      kanban.js  
-│  │      │      room.js  
-│  │      └──assets  
-│  │            └──sounds  
-│  │          　      rain.mp3  
-│  │          　      cafe.mp3  
-│  │          　      campfire.mp3  
-│  │          　      keyboard.mp3  
-│  │              
-│  └─test
-│      └─java
-│          └─com
-│              └─flowstudy
-│                  ├─core
-│                  │      MilestoneSchedulerTest.java
-│                  │      TimerStateMachineTest.java
-│                  │      
-│                  └─repository
-│                          FocusLogRepositoryTest.java
-
+```
 ## 前端
 static/  
 ├── index.html  
@@ -462,30 +394,4 @@ static/
 　　　　├── cafe.mp3  
 　　　　├── campfire.mp3  
 　　　　└── keyboard.mp3  
-
-## 後端
-controller/   
-├── FocusLogController.java  
-├── TodoController.java  
-└── StudyRoomController.java  
-  
-service/  
-├── FocusLogService.java  
-├── TodoService.java  
-└── StudyRoomService.java  
-  
-model/  
-├── FocusLog.java  
-├── Todo.java  
-└── StudyRoom.java  
-
-## core
-core/  
-├── TimerState.java  
-├── TimerMode.java  
-├── TimerCallback.java  
-├── TimerStateMachine.java  
-└── MilestoneScheduler.java  
-**最後更新**: 2026-06-03  
-**Phase 狀態**: Phase 1 進行中 ✅  
-**下一步**: Backend/Frontend 接手實現
+```
