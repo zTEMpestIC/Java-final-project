@@ -1,5 +1,8 @@
 package com.flowstudy.core;
 
+// 1. 引入新路徑下的 MilestoneDTO
+import com.flowstudy.core.contract.MilestoneAndSocialContract.MilestoneDTO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,16 +12,19 @@ public class MilestoneScheduler {
         List<Integer> dailyTargets = new ArrayList<>();
         int remainingWork = dto.totalTarget() - dto.currentProgress();
         
-        if (remainingWork <= 0 || dto.daysRemaining() <= 0) {
+        // 2. 使用 DTO 內建的方法來動態計算剩餘天數
+        int daysRemaining = dto.getDaysRemaining();
+        
+        if (remainingWork <= 0 || daysRemaining <= 0) {
             return dailyTargets;
         }
 
-        // Apply efficiency modifier. If efficiency is < 1.0, required daily target goes up.
+        // 套用效率權重：效率越低（< 1.0），代表過去常落後，每日所需目標會提高以防做不完
         double efficiencyModifier = 2.0 - dto.historicalEfficiency();
-        double baseDailyTarget = ((double) remainingWork / dto.daysRemaining()) * efficiencyModifier;
+        double baseDailyTarget = ((double) remainingWork / daysRemaining) * efficiencyModifier;
         int adjustedTarget = (int) Math.ceil(Math.max(1.0, baseDailyTarget));
 
-        for (int i = 0; i < dto.daysRemaining(); i++) {
+        for (int i = 0; i < daysRemaining; i++) {
             dailyTargets.add(adjustedTarget);
         }
         

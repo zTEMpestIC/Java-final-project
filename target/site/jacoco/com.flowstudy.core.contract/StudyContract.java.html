@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudyContract.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">FlowStudy</a> &gt; <a href="index.source.html" class="el_package">com.flowstudy.core.contract</a> &gt; <span class="el_source">StudyContract.java</span></div><h1>StudyContract.java</h1><pre class="source lang-java linenums">package com.flowstudy.core.contract;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+public interface StudyContract {
+
+    // 科目 DTO
+<span class="nc" id="L9">    record SubjectDTO(String id, String name, String colorCode) {</span>
+        public static SubjectDTO create(String name, String colorCode) {
+<span class="nc" id="L11">            return new SubjectDTO(UUID.randomUUID().toString(), name, colorCode);</span>
+        }
+    }
+
+    // 待辦事項 DTO (配合看板視圖的 TODO / DOING / DONE)
+<span class="nc" id="L16">    record TodoDTO(String id, String title, String subjectId, TaskStatus status, LocalDateTime createdAt) {</span>
+<span class="nc" id="L17">        public enum TaskStatus { TODO, DOING, DONE }</span>
+
+        public static TodoDTO createNew(String title, String subjectId) {
+<span class="nc" id="L20">            return new TodoDTO(UUID.randomUUID().toString(), title, subjectId, TaskStatus.TODO, LocalDateTime.now());</span>
+        }
+        
+        // 提供狀態變更的便捷方法 (因為 record 是不可變的，所以回傳新的實例)
+        public TodoDTO withStatus(TaskStatus newStatus) {
+<span class="nc" id="L25">            return new TodoDTO(this.id, this.title, this.subjectId, newStatus, this.createdAt);</span>
+        }
+    }
+
+    // 專注紀錄 DTO
+<span class="nc" id="L30">    record FocusLogDTO(String id, String subjectId, long durationMs, LocalDateTime endTime) {</span>
+        public static FocusLogDTO createLog(String subjectId, long durationMs) {
+<span class="nc" id="L32">            return new FocusLogDTO(UUID.randomUUID().toString(), subjectId, durationMs, LocalDateTime.now());</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
