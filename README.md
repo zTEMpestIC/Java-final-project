@@ -26,6 +26,7 @@ FlowStudy
 ├─docs
 │      BACKEND_HANDOFF_PHASE1.md
 │      core.md
+│      README_FRONTEND.md
 │      
 ├─src
 │  ├─main
@@ -34,6 +35,9 @@ FlowStudy
 │  │  │      └─flowstudy
 │  │  │          │  FlowStudyApplication.java
 │  │  │          │  
+│  │  │          ├─controller
+│  │  │          │      FocusApiController.java
+│  │  │          │   
 │  │  │          ├─core
 │  │  │          │  │  MilestoneScheduler.java
 │  │  │          │  │  TimerStateMachine.java
@@ -57,22 +61,26 @@ FlowStudy
 │  │  │                  
 │  │  └─resources
 │  │      │   application.yml
+│  │      │   index.html
+│  │      │
 │  │      ├──static
 │  │      │      ws-test.html
-│  │      │   index.html  
-│  │      ├──css  
-│  │      │      style.css  
-│  │      ├──js  
-│  │      │      timer.js  
-│  │      │      audio.js  
-│  │      │      kanban.js  
-│  │      │      room.js  
-│  │      └──assets  
+│  │      │
+│  │      ├──css
+│  │      │      style.css
+│  │      │
+│  │      ├──js
+│  │      │      timer.js
+│  │      │      audio.js
+│  │      │      kanban.js
+│  │      │      room.js
+│  │      │
+│  │      └──assets
 │  │            └──sounds  
-│  │          　      rain.mp3  
-│  │          　      cafe.mp3  
-│  │          　      campfire.mp3  
-│  │          　      keyboard.mp3  
+│  │          　      rain.mp3
+│  │          　      cafe.mp3
+│  │          　      campfire.mp3
+│  │          　      keyboard.mp3
 │  │              
 │  └─test
 │      └─java
@@ -83,7 +91,7 @@ FlowStudy
 │                  │      TimerStateMachineTest.java
 │                  │      
 │                  └─repository
-│                          FocusLogRepositoryTest.java
+│                          FocusLogRepositoryTest.java     
 ```
 
 ---
