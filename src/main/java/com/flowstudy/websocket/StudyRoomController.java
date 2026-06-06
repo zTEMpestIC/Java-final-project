@@ -4,6 +4,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import java.time.LocalDateTime;
 
 @Controller
 public class StudyRoomController {
@@ -14,23 +15,32 @@ public class StudyRoomController {
         this.messagingTemplate = messagingTemplate;
     }
 
-    // 接收狀態更新並廣播給房間內所有人
-    @MessageMapping("/room.statusUpdate")
+    // 1. 房間廣播：接收狀態更新並廣播給房間內所有人
+    // 前端發送至：/app/room.status
+    @MessageMapping("/room.status")
     public void updateStatus(@Payload RoomStatusMessage message) {
-        // 將更新推播到特定的房間頻道
+        System.out.println("收到狀態更新：" + message.userId() + " -> " + message.status());
+        
+        // 將更新推播到該房間的專屬頻道 (前端需訂閱 /topic/room/{roomId})
         messagingTemplate.convertAndSend("/topic/room/" + message.roomId(), message);
     }
 
-    // 處理「拍一拍」喚醒隊友 (點對點推送)
+    // 2. 拍一拍：喚醒隊友 (精準推播)
+    // 前端發送至：/app/room.nudge
     @MessageMapping("/room.nudge")
     public void nudgeTeammate(@Payload NudgeMessage message) {
-        // 推送到特定使用者的專屬頻道
-        messagingTemplate.convertAndSendToUser(
-            message.targetUserId(), "/queue/nudges", message
-        );
+        System.out.println("收到拍一拍：" + message.fromUserId() + " 拍了 " + message.targetUserId());
+        
+        // 推送到目標使用者的專屬頻道 (目標前端需訂閱 /topic/nudge/{targetUserId})
+        messagingTemplate.convertAndSend("/topic/nudge/" + message.targetUserId(), message);
     }
 
-    // 內部 DTO (對應 Contract)
-    public record RoomStatusMessage(String roomId, String userId, String status) {}
+    // --- 內部通訊用 DTO ---
+    public record RoomStatusMessage(String roomId, String userId, String status, LocalDateTime timestamp) {
+        public RoomStatusMessage {
+            if (timestamp == null) timestamp = LocalDateTime.now();
+        }
+    }
+    
     public record NudgeMessage(String fromUserId, String targetUserId, String message) {}
 }

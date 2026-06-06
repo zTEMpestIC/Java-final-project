@@ -12,16 +12,19 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        // 啟用簡單的記憶體 Message Broker (Phase 3 可無縫替換為 Redis / RabbitMQ)
-        // /topic 用於廣播 (如房間狀態)，/queue 用於點對點 (如拍一拍)
-        config.enableSimpleBroker("/topic", "/queue");
-        // 客戶端發送訊息的前綴
+        // 啟用記憶體 Broker。
+        // /topic 用於一對多的「廣播」（例如：房間動態）
+        config.enableSimpleBroker("/topic");
+        
+        // 客戶端發送訊息給後端時，需加上 /app 前綴
         config.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // 前端連線的端點，啟用 SockJS 備用方案
-        registry.addEndpoint("/ws-studyroom").setAllowedOriginPatterns("*").withSockJS();
+        // 註冊 WebSocket 連線端點。前端將會連線至 ws://localhost:8080/ws-studyroom
+        registry.addEndpoint("/ws-studyroom")
+                .setAllowedOriginPatterns("*") // 允許跨域連線（開發期方便測試）
+                .withSockJS();                 // 提供 SockJS 作為降級備用方案
     }
 }

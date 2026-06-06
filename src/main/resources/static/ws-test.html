@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>FlowStudy WebSocket 測試艙</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .box { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+        #log { background: #f4f4f4; padding: 10px; height: 200px; overflow-y: scroll; font-family: monospace; }
+        .highlight { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>🚀 FlowStudy 自習室測試艙</h2>
+    
+    <div class="box">
+        <h3>1. 身份設定與連線</h3>
+        我的 UserID: <input type="text" id="myUserId" value="user_A">
+        房間 ID: <input type="text" id="myRoomId" value="room_101">
+        <button onclick="connect()">連線並訂閱</button>
+    </div>
+
+    <div class="box">
+        <h3>2. 發送房間狀態 (廣播)</h3>
+        狀態: 
+        <select id="statusSelect">
+            <option value="讀書中 📖">讀書中</option>
+            <option value="休息中 ☕">休息中</option>
+        </select>
+        <button onclick="sendStatus()">發送狀態</button>
+    </div>
+
+    <div class="box">
+        <h3>3. 拍一拍 (點對點)</h3>
+        目標 UserID: <input type="text" id="targetUserId" value="user_B">
+        <button onclick="sendNudge()">👉 拍他！</button>
+    </div>
+
+    <h3>接收到的訊息：</h3>
+    <div id="log"></div>
+
+    <script>
+        let stompClient = null;
+
+        function logMessage(msg, isHighlight = false) {
+            const logDiv = document.getElementById('log');
+            const span = document.createElement('div');
+            span.className = isHighlight ? 'highlight' : '';
+            span.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logDiv.prepend(span);
+        }
+
+        function connect() {
+            const userId = document.getElementById('myUserId').value;
+            const roomId = document.getElementById('myRoomId').value;
+            
+            const socket = new SockJS('/ws-studyroom');
+            stompClient = Stomp.over(socket);
+            
+            stompClient.connect({}, function (frame) {
+                logMessage('✅ 連線成功！');
+                
+                // 訂閱房間廣播
+                stompClient.subscribe('/topic/room/' + roomId, function (message) {
+                    const data = JSON.parse(message.body);
+                    logMessage(`📢 [房間廣播] ${data.userId} 狀態改變為: ${data.status}`);
+                });
+
+                // 訂閱專屬我的「拍一拍」頻道
+                stompClient.subscribe('/topic/nudge/' + userId, function (message) {
+                    const data = JSON.parse(message.body);
+                    logMessage(`🔔 [被拍了] ${data.fromUserId} 拍了你！訊息: ${data.message}`, true);
+                });
+            });
+        }
+
+        function sendStatus() {
+            const msg = {
+                roomId: document.getElementById('myRoomId').value,
+                userId: document.getElementById('myUserId').value,
+                status: document.getElementById('statusSelect').value
+            };
+            stompClient.send("/app/room.status", {}, JSON.stringify(msg));
+        }
+
+        function sendNudge() {
+            const msg = {
+                fromUserId: document.getElementById('myUserId').value,
+                targetUserId: document.getElementById('targetUserId').value,
+                message: "快醒醒，專心讀書啦！"
+            };
+            stompClient.send("/app/room.nudge", {}, JSON.stringify(msg));
+        }
+    </script>
+</body>
+</html>

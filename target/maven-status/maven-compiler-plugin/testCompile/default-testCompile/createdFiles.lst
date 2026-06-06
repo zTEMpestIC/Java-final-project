@@ -1,3 +1,4 @@
-com\flowstudy\core\MilestoneSchedulerTest.class
 com\flowstudy\core\TimerStateMachineTest$TestTimerCallback.class
+com\flowstudy\repository\FocusLogRepositoryTest.class
+com\flowstudy\core\MilestoneSchedulerTest.class
 com\flowstudy\core\TimerStateMachineTest.class
