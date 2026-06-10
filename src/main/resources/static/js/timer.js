@@ -191,6 +191,11 @@ const TimerUI = {
 
     await refreshTodayFocusText();
     alert("讀書紀錄已儲存！");
+    // 更新熱點圖與統計圖
+    if (document.getElementById('loadStatsBtn')) {
+        document.getElementById('loadStatsBtn').click(); 
+    }
+
     this.reset();
   },
 

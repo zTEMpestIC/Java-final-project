@@ -178,31 +178,72 @@
       </section>
 
       <section id="room-section" class="card">
-        <div class="card-header">
-          <div>
-            <p class="eyebrow">Study Room</p>
-            <h3>自習室</h3>
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">Study Room</p>
+              <h3>自習室</h3>
+            </div>
+            <div class="inline-form">
+              <input id="roomNameInput" class="input" placeholder="房間名稱" value="期末衝刺室" />
+              <button id="createRoomBtn" class="btn primary">建立房間</button>
+              <button id="joinRoomBtn" class="btn">加入房間</button>
+            </div>
           </div>
-          <div class="inline-form">
-            <input id="roomNameInput" class="input" placeholder="房間名稱" value="期末衝刺室" />
-            <button id="createRoomBtn" class="btn primary">建立房間</button>
-            <button id="joinRoomBtn" class="btn">加入房間</button>
+          <div class="room-toolbar">
+            <span>目前房間：<strong id="currentRoomName">尚未加入</strong></span>
+            <select id="myStatusSelect" class="input small">
+              <option value="studying">讀書中</option>
+              <option value="resting">休息中</option>
+              <option value="offline">離線</option>
+            </select>
+            <button id="refreshRoomBtn" class="btn small-btn">刷新</button>
           </div>
-        </div>
-
-        <div class="room-toolbar">
-          <span>目前房間：<strong id="currentRoomName">尚未加入</strong></span>
-          <select id="myStatusSelect" class="input small">
-            <option value="studying">讀書中</option>
-            <option value="resting">休息中</option>
-            <option value="offline">離線</option>
-          </select>
-          <button id="refreshRoomBtn" class="btn small-btn">刷新</button>
-        </div>
-
-        <div id="roomMembers" class="member-grid"></div>
+          <div id="roomMembers" class="member-grid"></div>
       </section>
 
+      <section id="heatmap-section" class="card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Heatmap</p>
+            <h3>讀書熱點圖</h3>
+          </div>
+          <button id="loadStatsBtn" class="btn small-btn">載入統計</button>
+        </div>
+        <div id="heatmap" class="heatmap"></div>
+      </section>
+
+      <section class="grid two-columns">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">Subject Ratio</p>
+              <h3>各科目時數比例</h3>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: center; padding: 10px;">
+            <canvas id="subjectPieChart" width="300" height="300"></canvas>
+          </div>
+        </div>
+
+        <div class="card" id="milestone-section">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">Milestone</p>
+              <h3>里程碑推算</h3>
+            </div>
+          </div>
+          <form id="milestoneForm" class="milestone-form">
+            <input id="goalNameInput" class="input" placeholder="目標名稱，例如：讀完材料力學第七章" />
+            <input id="totalProgressInput" class="input" type="number" min="1" value="120" placeholder="剩餘總進度" />
+            <input id="deadlineInput" class="input" type="date" />
+            <button class="btn primary" type="submit">計算每日進度</button>
+          </form>
+          <div id="milestoneResult" class="milestone-result"></div>
+        </div>
+      </section>
+
+    </main>
+<!-- 
       <section id="stats-section" class="grid two-columns">
         <div class="card">
           <div class="card-header">
@@ -242,7 +283,7 @@
         </form>
         <div id="milestoneResult" class="milestone-result"></div>
       </section>
-    </main>
+    </main> -->
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
