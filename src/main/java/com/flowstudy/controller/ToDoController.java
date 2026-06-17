@@ -13,11 +13,11 @@ import com.flowstudy.repository.TodoRepository;
 
 @RestController
 @RequestMapping("/api/todos")
-public class TodoController {
+public class ToDoController {
 
     private final TodoRepository todoRepository;
 
-    public TodoController(TodoRepository todoRepository) {
+    public ToDoController(TodoRepository todoRepository) {
         this.todoRepository = todoRepository;
     }
 
