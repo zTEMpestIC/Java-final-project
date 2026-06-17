@@ -1,0 +1,136 @@
+/* css/theme-panels.css */
+
+body {
+  background: url('../assets/images/background.png') center/cover no-repeat fixed !important;
+  background-color: #111827 !important;
+  overflow: hidden !important; 
+  margin: 0;
+}
+
+.app-shell { display: block !important; }
+
+/* 左側固定選單 */
+.sidebar {
+  position: fixed !important;
+  top: 24px; left: 24px;
+  width: 280px !important;
+  height: calc(100vh - 48px) !important;
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+  z-index: 100 !important;
+}
+
+/* 右側預設抽屜 (一般功能用) */
+.main-content {
+  position: fixed !important;
+  top: 24px !important;
+  bottom: auto !important;
+  right: -600px !important; /* 預設隱藏在右外側 */
+  left: auto !important;
+  transform: none !important;
+  width: 500px !important;
+  max-width: calc(100vw - 340px) !important;
+  height: calc(100vh - 48px) !important;
+  background: rgba(15, 23, 42, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: -10px 10px 40px rgba(0, 0, 0, 0.5) !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 32px !important;
+  overflow-y: auto;
+  z-index: 101 !important;
+}
+
+/* 展開右側抽屜 */
+.main-content.open { right: 24px !important; }
+
+/* 🌟 特殊底部抽屜 (給統計圖專用) */
+.main-content.stats-mode {
+  top: auto !important;
+  bottom: -800px !important; /* 預設隱藏在下方 */
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-40%) !important; /* 置中微調 */
+  width: 900px !important; /* 橫向加寬 */
+  max-width: 90vw !important;
+  height: 480px !important; /* 高度縮減 */
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* 展開底部抽屜 */
+.main-content.stats-mode.open { bottom: 24px !important; }
+
+/* 區塊隱藏與顯示邏輯 */
+.main-content > section { display: none !important; }
+
+.main-content > section.active-section {
+  display: flex !important;
+  flex-direction: column;
+  gap: 24px;
+  animation: slideFadeIn 0.3s ease forwards;
+}
+
+/* 如果是 stats-section，讓它保持 grid 排版 */
+.main-content > section.active-section.grid {
+  display: grid !important;
+  grid-template-columns: 1.5fr 1fr !important; /* 讓熱點圖寬一點，圓餅圖窄一點 */
+}
+
+@keyframes slideFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 內部排版微調 */
+.timer-layout { grid-template-columns: 1fr !important; }
+.timer-layout .progress-ring { margin: 0 auto 20px auto; }
+.card { background: rgba(255, 255, 255, 0.03) !important; box-shadow: none !important; }
+
+/* 遮罩 */
+.panel-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.4); z-index: 99;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.panel-overlay.active { opacity: 1; pointer-events: auto; }
+
+/* 卷軸美化 */
+.main-content::-webkit-scrollbar { width: 6px; }
+.main-content::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+
+/* =========================================
+   覆寫：縮小熱點圖 (Heatmap) 的格子與間距
+   ========================================= */
+.heatmap-grid {
+  grid-template-rows: repeat(7, 10px) !important;
+  grid-auto-columns: 10px !important;
+  gap: 3px !important;
+}
+
+.heat-cell {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 2px !important;
+}
+
+.heatmap-months {
+  grid-auto-columns: 10px !important;
+  gap: 3px !important;
+}
+
+.heatmap-weekdays {
+  grid-template-rows: repeat(7, 10px) !important;
+  gap: 3px !important;
+}
+
+.heatmap-weekdays span,
+.heatmap-months span {
+  line-height: 10px !important;
+  font-size: 10px !important;
+}

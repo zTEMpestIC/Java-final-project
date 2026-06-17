@@ -108,5 +108,6 @@ public class FocusApiController {
         );
     }
 
+    
     public record FocusLogPayload(int userId, String subject, String startTime, String endTime, long durationSeconds) {}
 }
