@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FlowStudy｜沉浸式讀書輔助網站</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/theme-panels.css" />
 </head>
 <body>
   <div class="app-shell">
@@ -18,10 +19,11 @@
       </div>
 
       <nav class="nav">
-        <a href="#timer-section" class="nav-link active">計時器</a>
+        <a href="#timer-section" class="nav-link">計時器</a>
+        <a href="#noise-section" class="nav-link">白噪音</a>
         <a href="#kanban-section" class="nav-link">待辦看板</a>
         <a href="#room-section" class="nav-link">自習室</a>
-        <a href="#stats-section" class="nav-link">統計</a>
+        <a href="#stats-section" class="nav-link">統計資料</a>
         <a href="#milestone-section" class="nav-link">里程碑</a>
       </nav>
 
@@ -29,123 +31,82 @@
         <span class="label">今日專注</span>
         <strong id="todayFocusText">0 分鐘</strong>
       </div>
+      <div style="margin-top: 20px; display: flex; align-items: center; gap: 10px; color: #a8b3c7; font-size: 13px;">
+        <span class="pulse" style="width: 10px; height: 10px; background: #86efac; border-radius: 50%; box-shadow: 0 0 0 4px rgba(134, 239, 172, 0.14);"></span>
+        <span id="connectionStatus">Local Mode</span>
+      </div>
     </aside>
 
     <main class="main-content">
-      <section class="hero">
-        <div>
-          <p class="eyebrow">沉浸式讀書輔助網站</p>
-          <h2>建立你的讀書心流</h2>
-          <p>結合計時器、白噪音、待辦看板、自習室與讀書統計。</p>
+      <section id="timer-section" class="card timer-card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Focus Timer</p>
+            <h3>沉浸式計時器</h3>
+          </div>
+          <select id="timerMode" class="input small">
+            <option value="countdown">倒計時</option>
+            <option value="countup">正計時</option>
+            <option value="pomodoro">番茄鐘</option>
+          </select>
         </div>
-        <div class="hero-status">
-          <span class="pulse"></span>
-          <span id="connectionStatus">Local Mode</span>
+        <div class="timer-layout">
+          <div class="progress-ring" aria-label="timer progress">
+            <svg width="260" height="260" viewBox="0 0 260 260">
+              <circle class="ring-bg" cx="130" cy="130" r="112"></circle>
+              <circle class="ring-progress" id="ringProgress" cx="130" cy="130" r="112"></circle>
+            </svg>
+            <div class="timer-display">
+              <div id="timerLabel">準備開始</div>
+              <strong id="timerText">50:00</strong>
+              <small id="timerSubText">選擇科目後開始讀書</small>
+            </div>
+          </div>
+          <div class="timer-controls">
+            <label>科目<input id="subjectInput" class="input" value="材料力學" placeholder="例如：英文" /></label>
+            <div class="control-row">
+              <label>讀書分鐘<input id="focusMinutes" class="input" type="number" min="1" max="180" value="50" /></label>
+              <label>休息分鐘<input id="breakMinutes" class="input" type="number" min="1" max="60" value="10" /></label>
+            </div>
+            <div class="button-row">
+              <button id="startTimerBtn" class="btn primary">開始</button>
+              <button id="pauseTimerBtn" class="btn">暫停</button>
+              <button id="resetTimerBtn" class="btn">重設</button>
+              <button id="finishTimerBtn" class="btn danger">結束</button>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section id="timer-section" class="grid two-columns">
-        <div class="card timer-card">
-          <div class="card-header">
-            <div>
-              <p class="eyebrow">Focus Timer</p>
-              <h3>沉浸式計時器</h3>
-            </div>
-            <select id="timerMode" class="input small">
-              <option value="countdown">倒計時</option>
-              <option value="countup">正計時</option>
-              <option value="pomodoro">番茄鐘</option>
-            </select>
+      <section id="noise-section" class="card noise-card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Ambient Mixer</p>
+            <h3>白噪音</h3>
           </div>
-
-          <div class="timer-layout">
-            <div class="progress-ring" aria-label="timer progress">
-              <svg width="260" height="260" viewBox="0 0 260 260">
-                <circle class="ring-bg" cx="130" cy="130" r="112"></circle>
-                <circle class="ring-progress" id="ringProgress" cx="130" cy="130" r="112"></circle>
-              </svg>
-              <div class="timer-display">
-                <div id="timerLabel">準備開始</div>
-                <strong id="timerText">50:00</strong>
-                <small id="timerSubText">選擇科目後開始讀書</small>
-              </div>
-            </div>
-
-            <div class="timer-controls">
-              <label>
-                科目
-                <input id="subjectInput" class="input" value="材料力學" placeholder="例如：英文、會計、材料力學" />
-              </label>
-
-              <div class="control-row">
-                <label>
-                  讀書分鐘
-                  <input id="focusMinutes" class="input" type="number" min="1" max="180" value="50" />
-                </label>
-                <label>
-                  休息分鐘
-                  <input id="breakMinutes" class="input" type="number" min="1" max="60" value="10" />
-                </label>
-              </div>
-
-              <div class="button-row">
-                <button id="startTimerBtn" class="btn primary">開始</button>
-                <button id="pauseTimerBtn" class="btn">暫停</button>
-                <button id="resetTimerBtn" class="btn">重設</button>
-                <button id="finishTimerBtn" class="btn danger">結束並儲存</button>
-              </div>
-            </div>
-          </div>
+          <button id="stopAllAudioBtn" class="btn small-btn">全部停止</button>
         </div>
-
-        <div class="card noise-card">
-          <div class="card-header">
-            <div>
-              <p class="eyebrow">Ambient Mixer</p>
-              <h3>白噪音面板</h3>
-            </div>
-            <button id="stopAllAudioBtn" class="btn small-btn">全部停止</button>
+        <div class="noise-list">
+          <div class="noise-item" data-sound="rain">
+            <div><strong>Rain</strong><span>雨聲</span></div>
+            <button class="btn small-btn audio-toggle">播放</button>
+            <input class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.35" />
           </div>
-
-          <div class="noise-list">
-            <div class="noise-item" data-sound="rain">
-              <div>
-                <strong>Rain</strong>
-                <span>雨聲</span>
-              </div>
-              <button class="btn small-btn audio-toggle">播放</button>
-              <input class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.35" />
-            </div>
-
-            <div class="noise-item" data-sound="cafe">
-              <div>
-                <strong>Cafe</strong>
-                <span>咖啡廳</span>
-              </div>
-              <button class="btn small-btn audio-toggle">播放</button>
-              <input class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.25" />
-            </div>
-
-            <div class="noise-item" data-sound="campfire">
-              <div>
-                <strong>Campfire</strong>
-                <span>營火</span>
-              </div>
-              <button class="btn small-btn audio-toggle">播放</button>
-              <input class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.3" />
-            </div>
-
-            <div class="noise-item" data-sound="keyboard">
-              <div>
-                <strong>Keyboard</strong>
-                <span>鍵盤聲</span>
-              </div>
-              <button class="btn small-btn audio-toggle">播放</button>
-              <input class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.2" />
-            </div>
+          <div class="noise-item" data-sound="cafe">
+            <div><strong>Cafe</strong><span>咖啡廳</span></div>
+            <button class="btn small-btn audio-toggle">播放</button>
+            <input class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.25" />
           </div>
-
-          <p class="hint">請將音檔放在 assets/sounds/rain.mp3、cafe.mp3、campfire.mp3、keyboard.mp3。</p>
+          <div class="noise-item" data-sound="campfire">
+            <div><strong>Campfire</strong><span>營火</span></div>
+            <button class="btn small-btn audio-toggle">播放</button>
+            <input class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.3" />
+          </div>
+          <div class="noise-item" data-sound="keyboard">
+            <div><strong>Keyboard</strong><span>鍵盤聲</span></div>
+            <button class="btn small-btn audio-toggle">播放</button>
+            <input class="volume-slider" type="range" min="0" max="1" step="0.01" value="0.2" />
+          </div>
         </div>
       </section>
 
@@ -156,40 +117,26 @@
             <h3>待辦看板</h3>
           </div>
           <form id="todoForm" class="inline-form">
-            <input id="todoInput" class="input" placeholder="新增今日任務，例如：寫會計作業" />
+            <input id="todoInput" class="input" placeholder="新增今日任務" />
             <button class="btn primary" type="submit">新增</button>
           </form>
         </div>
-
         <div class="kanban-board">
-          <div class="kanban-column" data-status="todo">
-            <h4>To-Do</h4>
-            <div id="todoList" class="task-list"></div>
-          </div>
-          <div class="kanban-column" data-status="doing">
-            <h4>Doing</h4>
-            <div id="doingList" class="task-list"></div>
-          </div>
-          <div class="kanban-column" data-status="done">
-            <h4>Done</h4>
-            <div id="doneList" class="task-list"></div>
-          </div>
+          <div class="kanban-column" data-status="todo"><h4>To-Do</h4><div id="todoList" class="task-list"></div></div>
+          <div class="kanban-column" data-status="doing"><h4>Doing</h4><div id="doingList" class="task-list"></div></div>
+          <div class="kanban-column" data-status="done"><h4>Done</h4><div id="doneList" class="task-list"></div></div>
         </div>
       </section>
 
       <section id="room-section" class="card">
         <div class="card-header">
-          <div>
-            <p class="eyebrow">Study Room</p>
-            <h3>自習室</h3>
-          </div>
+          <div><p class="eyebrow">Study Room</p><h3>自習室</h3></div>
           <div class="inline-form">
             <input id="roomNameInput" class="input" placeholder="房間名稱" value="期末衝刺室" />
-            <button id="createRoomBtn" class="btn primary">建立房間</button>
-            <button id="joinRoomBtn" class="btn">加入房間</button>
+            <button id="createRoomBtn" class="btn primary">建立</button>
+            <button id="joinRoomBtn" class="btn">加入</button>
           </div>
         </div>
-
         <div class="room-toolbar">
           <span>目前房間：<strong id="currentRoomName">尚未加入</strong></span>
           <select id="myStatusSelect" class="input small">
@@ -199,43 +146,33 @@
           </select>
           <button id="refreshRoomBtn" class="btn small-btn">刷新</button>
         </div>
-
         <div id="roomMembers" class="member-grid"></div>
       </section>
 
       <section id="stats-section" class="grid two-columns">
         <div class="card">
           <div class="card-header">
-            <div>
-              <p class="eyebrow">Heatmap</p>
-              <h3>讀書熱點圖</h3>
-            </div>
-            <button id="loadStatsBtn" class="btn small-btn">載入統計</button>
+            <div><p class="eyebrow">Heatmap</p><h3>讀書熱點圖</h3></div>
+            <button id="loadStatsBtn" class="btn small-btn">載入</button>
           </div>
           <div id="heatmap" class="heatmap"></div>
         </div>
-
         <div class="card">
           <div class="card-header">
-            <div>
-              <p class="eyebrow">Subject Ratio</p>
-              <h3>各科目時數比例</h3>
-            </div>
+            <div><p class="eyebrow">Ratio</p><h3>各科目時數</h3></div>
           </div>
-          <canvas id="subjectPieChart" width="360" height="260"></canvas>
+          <div style="display: flex; justify-content: center; padding: 10px;">
+            <canvas id="subjectPieChart" width="220" height="220"></canvas>
+          </div>
         </div>
       </section>
 
       <section id="milestone-section" class="card">
         <div class="card-header">
-          <div>
-            <p class="eyebrow">Milestone</p>
-            <h3>里程碑推算</h3>
-          </div>
+          <div><p class="eyebrow">Milestone</p><h3>里程碑推算</h3></div>
         </div>
-
         <form id="milestoneForm" class="milestone-form">
-          <input id="goalNameInput" class="input" placeholder="目標名稱，例如：讀完材料力學第七章" />
+          <input id="goalNameInput" class="input" placeholder="目標名稱" />
           <input id="totalProgressInput" class="input" type="number" min="1" value="120" placeholder="剩餘總進度" />
           <input id="deadlineInput" class="input" type="date" />
           <button class="btn primary" type="submit">計算每日進度</button>
@@ -253,5 +190,6 @@
   <script src="js/room.js"></script>
   <script src="js/stats.js"></script>
   <script src="js/milestone.js"></script>
+  <script src="js/theme-panels.js"></script>
 </body>
 </html>

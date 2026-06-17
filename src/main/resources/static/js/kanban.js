@@ -1,7 +1,6 @@
 /**
  * kanban.js
  * 點擊切換式 Kanban，看板狀態：todo → doing → done → todo。
- * 如果之後要做拖曳，可以把 click handler 改成 drag and drop。
  */
 
 const Kanban = {
@@ -16,9 +15,17 @@ const Kanban = {
       done: document.getElementById("doneList")
     };
 
-    this.todos = await FlowStudyAPI.getTodos();
+    // 加上 try-catch 防止 API 錯誤導致整支程式崩潰
+    try {
+      this.todos = await FlowStudyAPI.getTodos() || [];
+    } catch (error) {
+      console.warn("無法從 API 取得待辦事項，使用本地暫存:", error);
+      this.todos = [];
+    }
+    
     this.render();
 
+    // 確保這段監聽事件有被成功綁定
     this.form.addEventListener("submit", event => {
       event.preventDefault();
       this.addTodo();
@@ -36,8 +43,13 @@ const Kanban = {
     });
 
     this.input.value = "";
-    await this.persist();
-    this.render();
+    this.render(); // 先更新畫面，讓使用者感覺不到延遲
+
+    try {
+      await this.persist();
+    } catch (error) {
+      console.warn("儲存失敗:", error);
+    }
   },
 
   async changeStatus(id, status) {
@@ -51,14 +63,24 @@ const Kanban = {
       todo.id === id ? { ...todo, status: status || next[todo.status] } : todo
     );
 
-    await this.persist();
     this.render();
+
+    try {
+      await this.persist();
+    } catch (error) {
+      console.warn("狀態更新失敗:", error);
+    }
   },
 
   async deleteTodo(id) {
     this.todos = this.todos.filter(todo => todo.id !== id);
-    await this.persist();
     this.render();
+
+    try {
+      await this.persist();
+    } catch (error) {
+      console.warn("刪除失敗:", error);
+    }
   },
 
   async persist() {
@@ -66,7 +88,9 @@ const Kanban = {
   },
 
   render() {
-    Object.values(this.columns).forEach(column => column.innerHTML = "");
+    Object.values(this.columns).forEach(column => {
+      if (column) column.innerHTML = "";
+    });
 
     this.todos.forEach(todo => {
       const card = document.createElement("div");
@@ -82,7 +106,9 @@ const Kanban = {
       card.querySelector('[data-action="next"]').addEventListener("click", () => this.changeStatus(todo.id));
       card.querySelector('[data-action="delete"]').addEventListener("click", () => this.deleteTodo(todo.id));
 
-      this.columns[todo.status]?.appendChild(card);
+      if (this.columns[todo.status]) {
+        this.columns[todo.status].appendChild(card);
+      }
     });
   },
 
