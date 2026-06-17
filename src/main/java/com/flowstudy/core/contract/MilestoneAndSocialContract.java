@@ -3,7 +3,7 @@ package com.flowstudy.core.contract;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public interface a {
+public interface MilestoneAndSocialContract {
 
     // 里程碑 DTO (保留給 MilestoneScheduler 使用)
     record MilestoneDTO(
