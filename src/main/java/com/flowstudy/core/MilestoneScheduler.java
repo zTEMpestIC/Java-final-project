@@ -1,7 +1,7 @@
 package com.flowstudy.core;
 
 // 1. 引入新路徑下的 MilestoneDTO
-import com.flowstudy.core.contract.MilestoneAndSocialContract.MilestoneDTO;
+import com.flowstudy.core.contract.a.MilestoneDTO;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.flowstudy.core.MilestoneScheduler;
-import com.flowstudy.core.contract.MilestoneAndSocialContract.MilestoneDTO;
+import com.flowstudy.core.contract.a.MilestoneDTO;
 
 @RestController
 @RequestMapping("/api/milestone")

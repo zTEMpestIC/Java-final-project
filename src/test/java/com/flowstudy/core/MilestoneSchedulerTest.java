@@ -1,6 +1,6 @@
 package com.flowstudy.core;
 
-import com.flowstudy.core.contract.MilestoneAndSocialContract.MilestoneDTO;
+import com.flowstudy.core.contract.a.MilestoneDTO;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
