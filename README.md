@@ -48,6 +48,9 @@ FlowStudy
 │  │  │          │  
 │  │  │          ├─controller
 │  │  │          │      FocusApiController.java
+│  │  │          │      MilestoneController.java
+│  │  │          │      SubjectController.java
+│  │  │          │      TodoController.java
 │  │  │          │   
 │  │  │          ├─core
 │  │  │          │  │  MilestoneScheduler.java
@@ -65,6 +68,8 @@ FlowStudy
 │  │  │          │      
 │  │  │          ├─repository
 │  │  │          │      FocusLogRepository.java
+│  │  │          │      SubjectRepository.java
+│  │  │          │      ToDoRepository.java
 │  │  │          │      
 │  │  │          └─websocket
 │  │  │                 StudyRoomController.java
